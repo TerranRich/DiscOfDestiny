@@ -1270,56 +1270,42 @@ To avoid resource-intensive references to the custom Game Mode, Game Instance, a
 ##### Game UI Message Widgets --- `E_GameUIMessageWidgets`
 Each value corresponds to a User Widget starting with UI_ and ending with the Enum display name (e.g. GameOver → UI_GameOver).
 
--- none --
-: *(None selected)*
-
-PlayerNamesInput
-: *Player input: Enter all 3 names*
-
-PlayerSpinBuySolve
-: *Player input: Choose to Spin wheel, Buy vowel, or Solve puzzle*
-
-PlayerGuessConsonant
-: *Player input: Guess a consonant (awarded wedge $ amount per correct letter)*
-
-PlayerGuessVowel
-: *Player input: Guess a vowel ($250 deducted after selection)*
-
-PlayerAttemptSolve
-: *Player input: Attempt to solve puzzle*
-
-IncorrectSolveGuess
-: *Message: Incorrect solve guess, or user gave up on solve attempt (show message, end turn)*
-
-RoundStart
-: *Message: Round start (announce which round we're in)*
-
-RoundEnd
-: *Message: Round end (declare correct guess, winner of round, prompt to continue)*
-
-IncorrectLetterGuess
-: *Message: Incorrect vowel or consonant guess (show message, end turn)*
-
-CorrectLetterGuess
-: *Message: Correct vowel or consonant guess (highlight matching letter tile[s], reveal one at a time, repeat turn)*
-
-FreeSpinSpace
-: *Message: Landed on a Free Spin space (show graphic, add FS to player's inventory, repeat turn)*
-
-BankruptSpace
-: *Message: Landed on a Bankrupt space (show graphic, current player loses all money, end turn*
-
-LoseTurnSpace
-: *Message: Landed on a Lose Turn space (show graphic, end turn)*
-
-WildCardSpace
-: *Message: Landed on a Wild Card space (TODO)*
-
-PrizeSpace
-: *Message: Landed on a Prize space (TODO)*
-
-GameOver
-: *Message: Game over! (show results, final total, prize(s), then let player choose Replay or Quit)*
+<dl>
+	<dt>-- none --</dt>
+	<dd>*(None selected)*</dd>
+	<dt>PlayerNamesInput</dt>
+	<dd>*Player input: Enter all 3 names*</dd>
+	<dt>PlayerSpinBuySolve</dt>
+	<dd>*Player input: Choose to Spin wheel, Buy vowel, or Solve puzzle*</dd>
+	<dt>PlayerGuessConsonant</dt>
+	<dd>*Player input: Guess a consonant (awarded wedge $ amount per correct letter)*</dd>
+ 	<dt>PlayerGuessVowel</dt>
+	<dd>*Player input: Guess a vowel ($250 deducted after selection)*</dd>
+ 	<dt>PlayerAttemptSolve</dt>
+	<dd>*Player input: Attempt to solve puzzle*</dd>
+	<dt>IncorrectSolveGuess</dt>
+	<dd>*Message: Incorrect solve guess, or user gave up on solve attempt (show message, end turn)*</dd>
+ 	<dt>RoundStart</dt>
+	<dd>*Message: Round start (announce which round we're in)*</dd>
+	<dt>RoundEnd</dt>
+	<dd>*Message: Round end (declare correct guess, winner of round, prompt to continue)*</dd>
+ 	<dt>IncorrectLetterGuess</dt>
+	<dd>*Message: Incorrect vowel or consonant guess (show message, end turn)*</dd>
+	<dt>CorrectLetterGuess</dt>
+	<dd>*Message: Correct vowel or consonant guess (highlight matching letter tile[s], reveal one at a time, repeat turn)*</dd>
+ 	<dt>FreeSpinSpace</dt>
+	<dd>*Message: Landed on a Free Spin space (show graphic, add FS to player's inventory, repeat turn)*</dd>
+	<dt>BankruptSpace</dt>
+	<dd>*Message: Landed on a Bankrupt space (show graphic, current player loses all money, end turn*</dd>
+	<dt>LoseTurnSpace</dt>
+	<dd>*Message: Landed on a Lose Turn space (show graphic, end turn)*</dd>
+	<dt>WildCardSpace</dt>
+	<dd>*Message: Landed on a Wild Card space (TODO)*</dd>
+	<dt>PrizeSpace</dt>
+	<dd>*Message: Landed on a Prize space (TODO)*</dd>
+	<dt>GameOver</dt>
+	<dd>*Message: Game over! (show results, final total, prize(s), then let player choose Replay or Quit)*</dd>
+</dl>
 
 ##### Letter Tile Characters --- `E_LetterTileCharacters`
 This is a list of possible letters and other characters, with way more symbols than needed (just in case you might want to utilize them and include them in puzzles with their own Letter Tile textures). These values are used as Row Names in the datatables for Letter Tile character strings (`DT_LetterTileCharacterStrings`) and textures (`DT_LetterTileCharacterTextures`).
@@ -1404,41 +1390,34 @@ The *Space Action Types* Enum is a list of wheel space types, each of which can 
 
 The following list contains all of the wheel space types that are available to use.
 
-Money
-: Player is awarded `Money Value` dollars for each instance of a correct letter guess
-
-Prize
-: **TODO:** Player is awarded a prize (randomized, collect all for achievement or something) on correct letter
-
-Lose Turn
-: Player immediately loses their turn
-
-Bankrupt
-: Player loses all of their money, then immediately loses their turn
-
-Free Vowel
-: **TODO:** Player gets a free vowel guess (no money awarded, but no money taken either)
-
-Free Spin
-: **TODO:** Player is awarded a Free Spin token that can be used only once at the end of any turn in order to have another turn to Solve or Spin. Player is then awarded `Money Value` dollars for each instance of a correct consonant guess (set to *-1* to skip consonant guess)
-
-Surprise
-: **TODO:** Player is either: (a) awarded `Money Value` on the spot; or (b) shown a Bankrupt message. 50/50 random chance on landing to reveal which action is taken.
-
-Wild Card
-: **TODO:** Player is awarded a Wild Card token that gives them an extra consonant selection in the Bonus Round, if they get there. Player is then awarded `Money Value` dollars for each instant of a correct consonant guess (set to -1 to skip consonant guess)
-
-Free Play
-: **TODO:** Player is allowed to call any consonant OR a free vowel, with no penalty if the letter isn't in the puzzle. Player is awarded `Money Value` dollars for each correct consonant (not vowel) guess (set to -1 for ???)
-
-Jackpot
-: **TODO:** At start of each Round, Jackpot Amount set to $5,000. With each spin that lands on a dollar amount, that amount is added to the Jackpot Amount (multiplied by the number of consonant occurrences). Upon landing on the Jackpot space, Player is awarded `Money Value` for each correct consonant (0 for no award). If Player then solves the puzzle correctly in the same turn, they win the Jackpot Amount! Otherwise, they lose their turn. Play then proceeds normally.
+<dl>
+	<dt>Money</dt>
+	<dd>Player is awarded `Money Value` dollars for each instance of a correct letter guess</dd>
+	<dt>Prize</dt>
+	<dd>**TODO:** Player is awarded a prize (randomized, collect all for achievement or something) on correct letter</dd>
+	<dt>Lose Turn</dt>
+	<dd>Player immediately loses their turn</dd>
+	<dt>Bankrupt</dt>
+	<dd>Player loses all of their money, then immediately loses their turn</dd>
+	<dt>Free Vowel</dt>
+	<dd>**TODO:** Player gets a free vowel guess (no money awarded, but no money taken either)</dd>
+	<dt>Free Spin</dt>
+	<dd>**TODO:** Player is awarded a Free Spin token that can be used only once at the end of any turn in order to have another turn to Solve or Spin. Player is then awarded `Money Value` dollars for each instance of a correct consonant guess (set to *-1* to skip consonant guess)</dd>
+	<dt>Surprise</dt>
+	<dd>**TODO:** Player is either: (a) awarded `Money Value` on the spot; or (b) shown a Bankrupt message. 50/50 random chance on landing to reveal which action is taken.</dd>
+	<dt>Wild Card</dt>
+	<dd>**TODO:** Player is awarded a Wild Card token that gives them an extra consonant selection in the Bonus Round, if they get there. Player is then awarded `Money Value` dollars for each instant of a correct consonant guess (set to -1 to skip consonant guess)</dd>
+	<dt>Free Play</dt>
+	<dd>**TODO:** Player is allowed to call any consonant OR a free vowel, with no penalty if the letter isn't in the puzzle. Player is awarded `Money Value` dollars for each correct consonant (not vowel) guess (set to -1 for ???)</dd>
+	<dt>Jackpot</dt>
+	<dd>**TODO:** At start of each Round, Jackpot Amount set to $5,000. With each spin that lands on a dollar amount, that amount is added to the Jackpot Amount (multiplied by the number of consonant occurrences). Upon landing on the Jackpot space, Player is awarded `Money Value` for each correct consonant (0 for no award). If Player then solves the puzzle correctly in the same turn, they win the Jackpot Amount! Otherwise, they lose their turn. Play then proceeds normally.</dd>
+</dl>
 
 #### Structs
 ##### Letter Tile Character String Structure --- `S_LetterTileCharacterString`
-1. **Character String** --- *String*
+* **Character String** --- *String*
 ##### Letter Tile Character Texture Structure --- `S_LetterTileCharacterTexture`
-1. **Character Texture** --- *Texture*
+* **Character Texture** --- *Texture*
 ##### Letter Tile Data Structure --- `S_LetterTileData`
 1. **Content** --- *Letter Tile Characters Enum* (`E_LetterTileCharacters`)
 	* Content of this tile (e.g. *Letter-A* for "A", *Period* for ".")
@@ -1452,7 +1431,7 @@ Jackpot
 	* Index of row in which tile appears
 
 ##### Player Animations List Structure --- `S_PlayerAnimationsList`
-1. **Animations** --- *Array: Anim Montages*
+* **Animations** --- *Array: Anim Montages*
 
 ##### Puzzle Answer Data Structure --- `S_PuzzleAnswerData`
 1. **Category** --- *Puzzle Categories Enum* (`E_PuzzleCategories`)
@@ -1520,6 +1499,10 @@ For any questions regarding the game system, or any comments or suggestions for 
 No trademarked or copyrighted terms, logos, sound effects, music, or other materials have been used in the Disc of Destiny project. Everything used within is either sourced from the public domain or Creative Commons (CC0), or created in-house, and verified to be free of any copyright or trademark violations. You are allowed to use anything and everything in this game system for your own legal purposes, including commercial use, under the Unreal Engine licensing terms and agreements. { FIND LINK }
 
 ### Credits
-* **Main menu music:** “Happy Happy Game Show” by Kevin MacLeod (incompetech.com)
-	* Licensed under Creative Commons: By Attribution 4.0 License (http://creativecommons.org/licenses/by/4.0/)
-* 
+<dl>
+	<dt>Main Menu music</dt>
+	<dd>"Happy Happy Game Show" by Kevin MacLeod (incompetech.com)</dd>
+	<dd>Licensed under Creative Commons: By Attribution 4.0 License (http://creativecommons.org/licenses/by/4.0/)</dd>
+	<dt>Sound Effects</dt>
+	<dd>All sound effects and stingers are either created by myself, or sourced from Freesound (Creative Commons 0 license)</dd>
+</dl>
