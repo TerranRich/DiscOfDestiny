@@ -1501,5 +1501,5 @@ No trademarked or copyrighted terms, logos, sound effects, music, or other mater
 	<dd>"Happy Happy Game Show" by Kevin MacLeod (incompetech.com)</dd>
 	<dd>Licensed under Creative Commons: By Attribution 4.0 License (http://creativecommons.org/licenses/by/4.0/)</dd>
 	<dt>Sound Effects</dt>
-	<dd>All sound effects and stingers are either created by myself, or sourced from Freesound (Creative Commons 0 license)</dd>
+	<dd>All sound effects and stingers are either created by myself, or sourced from [Freesound](https://freesound.org/) or [Kenney.nl](https://www.kenney.nl/assets/interface-sounds) (Creative Commons 0 license)</dd>
 </dl>
