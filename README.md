@@ -149,22 +149,22 @@ Every UI except for the Main Menu is controlled by the *Display HUD* UI, where y
 The bottom-left "Pause Game" button demonstrates a working Pause Menu, complete with the ability to go back to the Main Menu screen, thus ending the current game.
 
 #### Message Widgets
-The user interface system in Disc of Destiny consists in part of a "Message Widget" system --- a collection of User Widgets that implement the Message Widget Functionality blueprint interface, which allows for proper implementation into the Widget Switcher on the main Display HUD UI. When customizing any of the Message Widgets, keep intact any functionality within the `Message Widget Displayed` interface event as well as any UI element(s) referenced therein. See **Technical Reference** » ***User Interface*** below for more information on each individual UI widget.
+The user interface system in Disc of Destiny consists in part of a "Message Widget" system — a collection of User Widgets that implement the Message Widget Functionality blueprint interface, which allows for proper implementation into the Widget Switcher on the main Display HUD UI. When customizing any of the Message Widgets, keep intact any functionality within the `Message Widget Displayed` interface event as well as any UI element(s) referenced therein. See **Technical Reference** » ***User Interface*** below for more information on each individual UI widget.
 
 ### Sounds & Music
 Any of the sound cues and background music can be customized by simply adding your own and replacing the references to the default sound and music. Here is a list of every occurrence of `Play Sound 2D`:
 
-1. Player Names Input UI --- called when the toggle widget's value is changed (separate [CC0-licensed](https://www.kenney.nl/assets/interface-sounds) On and Off sounds)
-2. Puzzle Board --- called within the `Check Tile & Reveal if Highlighted` custom event, playing a custom "Ding" sound for each occurrence of a correct letter guess
+1. Player Names Input UI — called when the toggle widget's value is changed (separate [CC0-licensed](https://www.kenney.nl/assets/interface-sounds) On and Off sounds)
+2. Puzzle Board — called within the `Check Tile & Reveal if Highlighted` custom event, playing a custom "Ding" sound for each occurrence of a correct letter guess
 3. GameMode (`GM_DiscOfDestiny`):
-	1. Custom event `Show Incorrect Guess` --- called when player guesses a letter not present in the puzzle answer (plays a custom buzzer sound)
-	2. Interface event `Event Letter Reveals Completed` --- called when there are no more consonants *or* no more vowels in the current puzzle answer (plays a custom jingle for each)
-	3. Custom event `Player Wins Round` --- called after a player has successfully solved a puzzle and won the round (plays a custom stinger)
-	4. Interface event `Event Show Incorrect Solve` --- called after a player fails to solve the puzzle correctly (plays a custom sound effect)
-	5. Custom event `End Game` --- called at the end of all 3 rounds once the game has ended (plays a custom fanfare stinger)
-	6. Custom event `Landed on Bankrupt` --- called when a player spins the wheel and it lands on a Bankrupt space (plays a custom sound effect)
-	7. Custom event `Landed on Lose Turn` --- called when a player spins the wheeland it lands on a Lose A Turn space (plays a custom sound effect)
-	8. Interface event `Event Generate & Display New Puzzle` --- called at the start of each round to generate and display a new random puzzle on the Puzzle Board (plays a custom jingle)
+	1. Custom event `Show Incorrect Guess` — called when player guesses a letter not present in the puzzle answer (plays a custom buzzer sound)
+	2. Interface event `Event Letter Reveals Completed` — called when there are no more consonants *or* no more vowels in the current puzzle answer (plays a custom jingle for each)
+	3. Custom event `Player Wins Round` — called after a player has successfully solved a puzzle and won the round (plays a custom stinger)
+	4. Interface event `Event Show Incorrect Solve` — called after a player fails to solve the puzzle correctly (plays a custom sound effect)
+	5. Custom event `End Game` — called at the end of all 3 rounds once the game has ended (plays a custom fanfare stinger)
+	6. Custom event `Landed on Bankrupt` — called when a player spins the wheel and it lands on a Bankrupt space (plays a custom sound effect)
+	7. Custom event `Landed on Lose Turn` — called when a player spins the wheeland it lands on a Lose A Turn space (plays a custom sound effect)
+	8. Interface event `Event Generate & Display New Puzzle` — called at the start of each round to generate and display a new random puzzle on the Puzzle Board (plays a custom jingle)
 
 #### Wheel Pointer Click
 The clicking sound effect that the Wheel Pointer makes is itself a Sound Cue that takes three "click" sound effects (custom made) and plays one at random, with a slight random modulation in pitch and volume. You can add more "click" sounds by importing them into Unreal Engine and adding them to the `SFX_WheelSpinClick` Sound Cue. To alter the modulation values, open up the Sound Cue and look for the Pitch Min/Max and Volume Min/Max variables.
@@ -179,125 +179,125 @@ This section goes deeper into the technical details of the Disc of Destiny game 
 The project's Game Mode, `GM_DiscOfDestiny`, contains the bulk of the functionality for the core gameplay. Implements the *Game Mode Functionality Interface* (`BPI_GameModeFunctionality`).
 
 #### Game Mode Events
-##### Game Mode → Gameplay Level Loaded ^BPI^
+##### Game Mode → Gameplay Level Loaded <sup>BPI</sup>
 Called from the Main Menu UI (`UI_MainMenu`) after loading in the main level, this calls both the `Initialize Variables & UI` function and the `Start New Game` custom event. See below for both.
 ##### Game Mode → Tick
 The `Tick` event for this blueprint checks for the validity of the Pointer object reference variable (set during function `Initialize Variables & UI`) and, if it's valid, calls its `Check Pointer Click` event, which itself handles the detection of conditions warranting a "click" sound effect, to mimic the show's own mechanical pointers.
 ##### Game Mode → Set New Puzzle
 Inputs:
-* Full Phrase --- *String*
+* Full Phrase — *String*
 
 Passes a given puzzle answer text to the Board object's `Set Puzzle Contents`  function. Called from only within this blueprint, from the `Generate & Display New Puzzle` interface event (see below).
 ##### Game Mode → Start New Game
 Called only from within this blueprint (in the `Gameplay Level Loaded` interface event above), this event adds both the Display HUD (stored as the `HUD` variable) and the Fade Overlay UI (retrieved from the GameInstance. After a short ½-second delay (to allow everything to finish loading in properly), a collapsed graph `Store Actor References` is called, which stores the game level's existing Puzzle Board, Wheel, and Wheel Pointer actors as corresponding object references, for later use.
 
 Then, all Disc of Destiny CineCameras in the level are stored in the Player Controller (`PC_DiscOfDestiny`) and the active camera is set to show all players. The Wheel's `Initialize` event is then run, and then the Fade Overlay's `Reveal` event is called, which fades the overlay out, thus "fading in" the scene. (This is also where the Restart functionality eventually picks up.) The mouse cursor is displayed, the current round number set to 1, a random starting player # chosen (between 1 and 3), and the Player Names Input UI is then displayed via the HUD object reference.
-##### Game Mode → Introduce Players ^BPI^
+##### Game Mode → Introduce Players <sup>BPI</sup>
 If the "Show Contestant Intros?" toggle on the Player Names Input UI is set to **ON**, then this event will be run. All it does is call the next event with a value of 1 (the first contestant), which starts the contestant introduction sequence.
 ##### Game Mode → Introduce Player
 Inputs:
-* Player Number --- *Integer*
+* Player Number — *Integer*
 
 Handles the visual introduction of each contestant, which consists of their name fading in then out at the bottom of the screen and a character animation, randomly chosen from a group of animations sourced from Mixamo that roughly represent a greeting of some sort to the camera/crowd. This event is recursive; at the end of each call, the number passed to it is incremented by 1 and then passed to itself. At the start of the event, however, this number is checked and if it is greater than 3, then the introductions stop (as there are no more contestants) and this blueprint's `Begin New Round` interface event is called instead.
-##### Game Mode → Begin New Round ^BPI^
+##### Game Mode → Begin New Round <sup>BPI</sup>
 Called from either the `Introduce Player` event above (once introductions are complete) or the Player Names Input UI (if introductions are bypassed). The Puzzle Board camera is set as the active one, then the Round Start UI is displayed while the round # is displayed at the top. The "No More Consonants/Vowels" flags are reset to false, the current letter monetary value reset to $0, and the Guessed Letters array reset to empty. After a delay of 3 seconds the Round Start UI is then hidden. A new puzzle gets generated and gameplay goes to the first (random) player.
 ##### Game Mode → Begin Player Turn
 Called only from within, from the `Go To Next Player` interface event. The Player Actions UI (Spin/Buy Solve) is displayed for the player to choose their action. The current player is set as the active one in the Display HUD (i.e. current player's name and dollar amounts are fully opaque while the other 2 are semitransparent). The Puzzle Board camera is set to the active one, and then the Round # and Category are displayed on the HUD.
-##### Game Mode → Spin Wheel ^BPI^
+##### Game Mode → Spin Wheel <sup>BPI</sup>
 Called from the Spin/Buy/Solve UI when the player chooses Spin Wheel (or called again if the Wheel Pointer fails to detect a Wheel Wedge after spinning). The round # and category text are temporarily hidden while the camera changes to show all players. All 3 players are looped through, and the active player gets the "spin wheel" animation applied to them, while the other 2 have their "clapping" state set to true (a variable that the Animation Blueprint looks for as a trigger for the corresponding clapping animation. After this loop, and a delay of 1 second, the `Spin` event in the Wheel object is called, with a random float between 0.625 and 1.25 passed as the Modifier value (which is then used in calculating the final rotation value of the wheel).
-##### Game Mode → Prompt Guess Letter ^BPI^
+##### Game Mode → Prompt Guess Letter <sup>BPI</sup>
 Inputs:
-* Vowel? --- *Boolean*
-* Ltr Value --- *Integer*
+* Vowel? — *Boolean*
+* Ltr Value — *Integer*
 
 Called when the player either lands on a cash value space, or chooses to buy a vowel. The Game Mode's internal `Current Letter Value` variable is set to the given *Ltr Value* number, then the Puzzle Board camera is set to active. Either the Guess Consonant or the Guess Vowel UI is displayed (depending on the value of the *Vowel?* flag), and the round # and puzzle category text elements are displayed again.
-##### Game Mode → Process Letter Guess ^BPI^
-Called once the player selects a letter, this event handles what happens afterward. If a vowel was guessed, then the game's Vowel Cost (set to $250 by default) is deducted. Regardless, the guessed letter is stored internally as the Last Guessed Letter and is added to the internal list of Guessed Letters. If the letter exists in the puzzle answer, then the Puzzle Board highlights all tiles containing that letter, then --- one by one, a second or so apart --- each tile is revealed to the player, along with the Correct Letter Guess UI. If the letter does not exist, then the internal `Show Incorrect Guess` event is triggered.
-##### Game Mode → Letter Reveals Completed ^BPI^
+##### Game Mode → Process Letter Guess <sup>BPI</sup>
+Called once the player selects a letter, this event handles what happens afterward. If a vowel was guessed, then the game's Vowel Cost (set to $250 by default) is deducted. Regardless, the guessed letter is stored internally as the Last Guessed Letter and is added to the internal list of Guessed Letters. If the letter exists in the puzzle answer, then the Puzzle Board highlights all tiles containing that letter, then — one by one, a second or so apart — each tile is revealed to the player, along with the Correct Letter Guess UI. If the letter does not exist, then the internal `Show Incorrect Guess` event is triggered.
+##### Game Mode → Letter Reveals Completed <sup>BPI</sup>
 Inputs:
-* Number Of Highlighted Tiles --- *Integer*
+* Number Of Highlighted Tiles — *Integer*
 
 Called once the aforementioned correct tile highlighting has completed, the total cash award value (the *Number Of Highlighted Tiles* × the *Current Letter Value*) is given to the player if a consonant was guessed (none if it was a vowel, as the value has already been deducted at this point), and then a sequence of events occurs:
 1. The conditions for "No More Consonants" are checked and, if the corresponding flag hasn't already been set, it  is then set to true (so that it is only triggered once). The "No More Consonants" sound is then played, followed by the display of the corresponding text in the upper-right corner of the screen.
 2. The conditions for "No More Vowels" are checked and, if the corresponding flag hasn't already been set, it is then set to true. The "No More Vowels" sound is played, followed by the display of the corresponding text in the HUD.
 3. If all letters have been revealed, then the player wins this round. Otherwise, the Spin/Buy/Solve UI is shown and gameplay continues.
-##### Game Mode → Update Player Amounts ^BPI^
+##### Game Mode → Update Player Amounts <sup>BPI</sup>
 Called whenever the player earns money for a correct letter guess (from within each Contestant actor's blueprint), lands on bankrupt (and thus has their dollar amount cleared), or at the end of each round when the winning player's money is banked and all current amounts are cleared. The dollar amount won this round and the amount won in the game so far, for each of the 3 players, are passed to the HUD so that all player dollar amount text widgets can be updated properly.
 ##### Game Mode → Show Incorrect Guess
 Called only from within the internal `Process Letter Guess` interface event when a player guesses a letter that does not exist in the current puzzle. Shows the Incorrect Letter Guess UI and plays the custom-made "buzzer" sound effect.
-##### Game Mode → Prompt Solve Puzzle ^BPI^
+##### Game Mode → Prompt Solve Puzzle <sup>BPI</sup>
 Called when the player chooses to Solve the Puzzle from the Spin/Buy/Solve UI. Focuses on the Puzzle Board camera, [re-]displays the round # and category text, then shows the Solve Puzzle Input UI to allow the player to enter their guess.
-##### Game Mode → Process Solve Attempt ^BPI^
+##### Game Mode → Process Solve Attempt <sup>BPI</sup>
 Inputs:
-* Guess --- *String*
+* Guess — *String*
 
 Called after a guess is submitted for a puzzle solve attempt. Clears any Message Widgets, then checks to see if the player entered text that matches the puzzle text (case-insensitive). If so, the `Player Wins Round` event (see next below) is triggered; otherwise, the `Show Incorrect Solve` interface event is triggered (see below).
 ##### Game Mode → Player Wins Round
 Called when the player submits a correct guess when solving the puzzle. Banks the winner's money (see next event below), then reveals the entire puzzle to the players as the "Round Win" jingle/stinger is played and the Round End UI is displayed, from where the player can continue gameplay manually.
 ##### Game Mode → Bank Winner's Money
 Loops through each of the 3 players and, if the selected one is the active player, their money is banked and cleared; otherwise, their money is simply cleared (unless you want to award consolation prizes or some kind of bonus for something). Afterward, the `Update Player Amounts` interface event (see above) is triggered, so that the HUD has its text values updated.
-##### Game Mode → Prep For Next Round ^BPI^
+##### Game Mode → Prep For Next Round <sup>BPI</sup>
 Called when the player clicks "Continue" from the Round End UI. The Puzzle Board is cleared and any Message Widgets are cleared from their container. If this is the last round, then the `End Game` event (see below) is triggered and nothing else happens in this event. Otherwise, the Current Round number value is incremented by 1, the "No More..." indicators are hidden from the HUD, and `Begin New Round` is triggered (see far above).
-##### Game Mode → Show Incorrect Solve ^BPI^
+##### Game Mode → Show Incorrect Solve <sup>BPI</sup>
 Called when the player either gives up solving, or submits an incorrect guess at the puzzle answer. The corresponding sound effect is played as the Incorrect Solve Guess UI is displayed. From there, the player continues gameplay manually, and the next player begins their turn.
 ##### Game Mode → End Game
 Called after the final round has ended. All players are shown as the Game Over musical stinger (royalty- and copyright-free) is played, the round # and category text are hidden, and the Game Over UI is displayed, which allows the player to either restart the game or quit to desktop.
-##### Game Mode → Restart Game ^BPI^
+##### Game Mode → Restart Game <sup>BPI</sup>
 Called when the player chooses to start a new game after the current one has ended. Each player's "Clapping" flag is set to false (stopping any clapping animation and resetting them to pre-Game Over state), then all Message Widgets are cleared out. We wait a second, fade to black, wait a second to allow the fade to play out, reset all dollar amount values (and update the HUD's text values accordingly), then trigger `Start New Game After Restarting` (see far below)
-##### Game Mode → Pause Game ^BPI^
+##### Game Mode → Pause Game <sup>BPI</sup>
 Called whenever the "Pause Game" button (in the lower-left corner of the screen) is clicked. The Pause Menu is displayed as the game itself itself is paused.
-##### Game Mode → Unpause Game ^BPI^
+##### Game Mode → Unpause Game <sup>BPI</sup>
 Called whenever "Resume" is selected from the Pause Menu. The Pause Menu is hidden and the game itself is un-paused.
-##### Game Mode → Handle Wheel Space Landed On ^BPI^
+##### Game Mode → Handle Wheel Space Landed On <sup>BPI</sup>
 Inputs:
-* Space --- *Wheel Space Data (Struct)*
-	* Action Type --- *Space Action Types (Enum)*
-	* Money Value --- *Integer*
+* Space — *Wheel Space Data (Struct)*
+	* Action Type — *Space Action Types (Enum)*
+	* Money Value — *Integer*
 
 A `Switch` node is used to split out the functionality depending on which type of space the last spin landed on, which is determined by the Wheel Wedge type detected by the Wheel Pointer at a point past and below its tip. Currently, only three cases are handled: `Money`, `Lose Turn`, and `Bankrupt`. Many others can easily be plugged in, with the existing values planned to be handled in later updates of this game system. For *Money* space types, the Space Money Value is passed as the *Ltr Value* parameter (and *false* as the `Vowel?` flag) to the internal `Prompt Guess Letter` interface event so that the player can guess a consonant. For both *Lose Turn* and *Bankrupt*, the respective one of the two following events are triggered.
 ##### Game Mode → Landed on Bankrupt
 Called in the previous event above, when the player lands on a Bankrupt-type space on the wheel. The "Bankrupt" sound effect is played, the current player's money (from the current round) is wiped out, and the Bankrupt UI is displayed. From there, the player can continue gameplay manually, and the next player's turn begins.
 ##### Game Mode → Landed on Lose Turn
 Called in the `Handle Wheel Space Landed On` interface event above, when the player lands on a Lose Turn-type space on the wheel. The "Lose a Turn" sound effect is played, and the Lose Turn UI is displayed. From there, the player can continue gameplay manually, and the next player's turn begins.
-##### Game Mode → Go To Next Player ^BPI^
+##### Game Mode → Go To Next Player <sup>BPI</sup>
 The current player number is incremented (or set to 1 if player 3's turn just ended), and the `Begin Player Turn` event (see above) is triggered.
-##### Game Mode → Set Player Names ^BPI^
+##### Game Mode → Set Player Names <sup>BPI</sup>
 Inputs:
-* Player 1 Name --- *String*
-* Player 2 Name --- *String*
-* Player 3 Name --- *String*
+* Player 1 Name — *String*
+* Player 2 Name — *String*
+* Player 3 Name — *String*
 
 Called once each player's name has been set and submitted. Sets an internal map of Integers to Strings (`Player Names`) such that the String stored in key 1 is set to *Player 1 Name*, and so on for the other two players. Then, the HUD's corresponding `Set Player Names` event is triggered, with each *Player _ Name* variable above passed along.
-##### Game Mode → Close Message Widgets ^BPI^
+##### Game Mode → Close Message Widgets <sup>BPI</sup>
 Inputs:
-* End Turn? --- *Boolean*
+* End Turn? — *Boolean*
 
 Called when clicking the "Continue" button to resume gameplay on the Bankrupt, Lose Turn, Incorrect Letter Guess, and Incorrect Solve Attempt UIs; or, when clicking either of the Spin, Buy, or Solve action buttons in the Spin/Buy/Solve UI. The HUD's own `Clear Message Widgets` event is triggered (*Fade Out?* set to *true*). Then, if *End Turn?* is *true*, wait a second and then trigger the internal `Go To Next Player` interface event (see above).
-##### Game Mode → Generate & Display New Puzzle ^BPI^
+##### Game Mode → Generate & Display New Puzzle <sup>BPI</sup>
 Called only from the internal `Begin New Round` interface event (see above). The Puzzle Board is cleared, then a random (non-Bonus *for now*) puzzle answer is chosen from the datatable and stored as the *Current Puzzle* (a `Puzzle Answer Data` Struct), and the Answer is passed along to `Set New Puzzle` (see above). The puzzle's Category is converted to a user-friendly string that is then passed to the HUD's `Show Puzzle Category` event before the "New Puzzle" jingle/stinger is played.
-##### Game Mode → Set Player Objects ^BPI^
+##### Game Mode → Set Player Objects <sup>BPI</sup>
 Inputs:
-* Player Refs --- *Map: Integers → Game Contestant Actor Object References*
+* Player Refs — *Map: Integers → Game Contestant Actor Object References*
 
 Called from the Player Controller's `Store Cameras` event, which also handles the detection of each contestant's actor in the game level. The map of *Player Refs* passed along from the Player Controller here is stored as an internal variable, called *Player Objects*.
 ##### Game Mode → Start New Game After Restarting
 Called after starting a new game once the current game has ended. Delays half a second, just in case anything needs to finish reloading, then branches into the `Start New Game` event (see above), at the point where the Fade Overlay fades us back in.
 
 #### Game Mode Functions
-##### Game Mode → Get Consonant or Vowel Message Type ^PURE^
+##### Game Mode → Get Consonant or Vowel Message Type <sup>PURE</sup>
 Inputs:
-* Vowel? --- *Boolean*
+* Vowel? — *Boolean*
 
 Outputs:
-* Widget Type --- *Game UI Message Widgets (Enum)*
+* Widget Type — *Game UI Message Widgets (Enum)*
 
 Returns the `PlayerGuessVowel` enum value if *Vowel?* is *true*; otherwise, `PlayerGuessConsonant` is returned. This is used to determine which "Guess" UI to show when a player chooses to either spin and guess a consonant, or buy and guess a vowel.
-##### Game Mode → Get Random Puzzle ^PURE^
+##### Game Mode → Get Random Puzzle <sup>PURE</sup>
 Inputs:
-* Must be Bonus? --- *Boolean*
+* Must be Bonus? — *Boolean*
 
 Outputs:
-* Puzzle Row --- *Puzzle Answer Data (Struct)*
+* Puzzle Row — *Puzzle Answer Data (Struct)*
 
 Returns a random row from the Puzzle Answers datatable (`DT_PuzzleAnswers`) with its *Is Bonus?* value matching the *Must be Bonus?* value passed into this function.
 ##### Game Mode → Hide Mouse
@@ -310,23 +310,23 @@ For each Game Contestant actor object reference stored in the internal Player Ob
 Increments the internal Active Player integer counter by 1. If it's greater than 3, sets it back to 1.
 ##### Game Mode → Show Mouse
 Sets the Player Controller's input mode to "Game and UI" and mouse cursor visibility state to *true*.
-##### Game Mode → Should Alert No More Consonants? ^PURE^
+##### Game Mode → Should Alert No More Consonants? <sup>PURE</sup>
 Outputs:
-* Alert? --- *Boolean*
+* Alert? — *Boolean*
 
 Returns whether or not both: the current puzzle's consonants have all been solved; *and*, the internal flag *Alerted No More Consonants?* hasn't already been set to *true*. (Basically, returns whether or not we should now alert the players that there are no more consonants left in the puzzle to guess.)
-##### Game Mode → Should Alert No More Vowels? ^PURE^
+##### Game Mode → Should Alert No More Vowels? <sup>PURE</sup>
 Outputs:
-* Alert? --- *Boolean*
+* Alert? — *Boolean*
 
 Returns whether or not both: the current puzzle's vowels have all been solved; *and*, the internal flag *Alerted No More Vowels?* hasn't already been set to *true*. (Basically, returns whether or not we should now alert the players that there are no more vowels left in the puzzle to guess.)
-##### Game Mode → String Contains ^PURE^
+##### Game Mode → String Contains <sup>PURE</sup>
 Inputs:
-* Haystack --- *String*
-* Needle --- *String*
+* Haystack — *String*
+* Needle — *String*
 
 Outputs:
-* Found? --- *Boolean*
+* Found? — *Boolean*
 
 Simply a (better-looking) shortcut for the String `Contains` node (with both *Use Case* and *Search from End* left set to *false*), returning its return value with *Haystack*'s value passed to its *SearchIn* input and *Needle*'s passed to *Substring*. I just disliked how big and clunky the `Contains` node looked among the other, cooler-looking nodes.
 
@@ -416,26 +416,26 @@ The cost to purchase each vowel. Set by default to 250 (dollars), to match the r
 The project's Game Instance, `GI_DiscOfDestiny`, contains functionality and references that are needed game-wide (i.e. across levels). Implements the *Game Instance Core Functionality Interface* (`BPI_GameInstanceFunctionality`).
 
 #### Game Instance Events
-##### Game Instance → Set Intro Song Playing State ^BPI^
+##### Game Instance → Set Intro Song Playing State <sup>BPI</sup>
 Inputs:
-* State --- *Boolean*
+* State — *Boolean*
 
 Sets the internal boolean flag (`Intro Song Playing?`) that determines whether or not the intro background music is currently playing, as determined by the given *State* value.
-##### Game Instance → Set Fade Overlay Widget ^BPI^
+##### Game Instance → Set Fade Overlay Widget <sup>BPI</sup>
 Inputs:
-* Fade Overlay --- *Fade Overlay* (`UI_FadeOverlay`) Object Reference
+* Fade Overlay — *Fade Overlay* (`UI_FadeOverlay`) Object Reference
 
 Stores the given *Fade Overlay* references locally, as `Fade`.
 
 #### Game Instance Interfaces (Functions)
 ##### Game Instance → Get Fade Overlay Widget
 Outputs:
-* Fade Overlay --- *Fade Overlay* (`UI_FadeOverlay`) Object Reference
+* Fade Overlay — *Fade Overlay* (`UI_FadeOverlay`) Object Reference
 
 Returns the internally stored Fade Overlay object reference.
 ##### Game Instance → Is Intro Song Playing?
 Outputs:
-* State --- *Boolean*
+* State — *Boolean*
 
 Returns the value of the internal flag (`Intro Song Playing?`) that stores whether or not the Main Menu intro song is currently playing.
 
@@ -453,29 +453,29 @@ A reference to the Fade Overlay UI used throughout the game to fade in and out t
 The project's Player Controller, `PC_DiscOfDestiny`, contains functionality and references that are relevant on a contestant level, as well as camera functionality.
 
 #### Player Controller Events
-##### Player Controller → Store Cameras ^BPI^
+##### Player Controller → Store Cameras <sup>BPI</sup>
 Called by the Game Mode's `Start New Game` event. Resets the internal variable storing all game level camera references (`Cameras`). Then, all actors in the game level of the type *Disc of Destiny CineCamera* (`BP_GameCineCamera`) are checked. If none are found, then every ½-second we check again until we find that they have finally loaded. These actors are then stored in the *Cameras* array.  Next, the player colors array from the Game Mode is copied over to an internal variable here. Finally, all 3 Contestant actors in the level are stored internally and then passed on to the Game Mode via its `Set Player Objects` interface function.
 ##### Player Controller → Switch To Camera
 Inputs:
-* Active Camera --- *Camera Placements (Enum)* (`E_CameraPlacements`)
+* Active Camera — *Camera Placements (Enum)* (`E_CameraPlacements`)
 
 Called whenever a camera switch is needed (quite often and throughout various blueprints in the project). Finds the given *Active Camera* enum value in the internal *Cameras* map (as a key). It is then set as the active camera (i.e. View Target).
-##### Player Controller → Trigger Animation Type ^BPI^
+##### Player Controller → Trigger Animation Type <sup>BPI</sup>
 Inputs:
-* Player Number --- *Integer*
-* Animation Type --- *Player Animation Categories (Enum)* (`E_PlayerAnimationCategories`)
+* Player Number — *Integer*
+* Animation Type — *Player Animation Categories (Enum)* (`E_PlayerAnimationCategories`)
 
 Finds the Contestant actor stored with the key value matching *Player Number*, then (if found) plays a random greeting animation of the type *Animation Type* via the Contestant's `Play Random Animation` event.
 ##### Player Controller → Set Active Camera on Player
 Inputs:
-* Player Number --- *Integer*
+* Player Number — *Integer*
 
 Calls the internal `Switch to Camera` event (see above) with the player camera matching the given *Player Number* (1 to 3), or the "All Players" camera if 0 (i.e. no value) was passed.
 
 #### Player Controller Interfaces (Functions)
 ##### Player Controller → Get Player Objects
 Outputs:
-* Player Objects --- *Map: Integers → Game Contestant Actor (`BP_Contestant`) Object References*
+* Player Objects — *Map: Integers → Game Contestant Actor (`BP_Contestant`) Object References*
 
 Returns the internal `Player Objects` variable's contents.
 
@@ -505,12 +505,12 @@ Each of the three players in-game are each represented by the project's Game Con
 #### Game Contestant Events
 ##### Game Contestant → Play Random Animation
 Inputs:
-* Animation Type --- *Player Animation Categories (Enum)* (`E_PlayerAnimationCategories`)
+* Animation Type — *Player Animation Categories (Enum)* (`E_PlayerAnimationCategories`)
 
 Sets the internal `Is Currently Animating?` flag to *true* before playing a random animation from the list of animations stored internally in the `Player Animations` map variable, with the *Animation Type* value as the key. Once the animation has completed (or is interrupted for whatever reason) the internal flag is set back to *false*.
 ##### Game Contestant → Set Clapping State
 Inputs:
-* Clapping? --- *Boolean*
+* Clapping? — *Boolean*
 
 Sets the internal `Is Clapping?` flag to the same value as the *Clapping?* value passed here.
 
@@ -519,7 +519,7 @@ Sets the internal `Is Clapping?` flag to the same value as the *Clapping?* value
 Plays the animation montage responsible for the cruddy placeholder "spinning the wheel" animation we have set for contestants (`AM_Player_Gesture_SpinWheel_Montage`).
 ##### Game Contestant → Award Money
 Inputs:
-* Money Offset --- *Integer*
+* Money Offset — *Integer*
 
 Alters the contestant's current money amount by the *Money Offset* value passed in. So, if the number passed in negative, money will be taken *from* the contestant's current round dollar amount. After, the Game Mode's `Update Player Amounts` interface event is triggered, which then updates the dollar amounts shown on the Display HUD.
 
@@ -530,34 +530,34 @@ Resets the internally stored `Current Action` to *- none -* (i.e. blank, for all
 Resets the dollar amount won in this current round to 0.
 ##### Game Contestant → Clear/Bank Money
 Inputs:
-* Bank? --- *Boolean*
+* Bank? — *Boolean*
 
 If we are banking the money (i.e. *Bank?* is set to *true*), then the dollar amount won in this round is added to the dollar amount won so far. Regardless, the dollar amount won in this round is reset to 0.
-##### Game Contestant → Get Money & Total ^PURE^
+##### Game Contestant → Get Money & Total <sup>PURE</sup>
 Outputs:
-* Player Money --- *Integer*
-* Player Total --- *Integer*
+* Player Money — *Integer*
+* Player Total — *Integer*
 
 Returns the internal variables for the dollar amount won this round and won in total, respectively, as the values for *Player Money* and *Player Total*.
-##### Game Contestant → Get Money Won Last Round ^PURE^
+##### Game Contestant → Get Money Won Last Round <sup>PURE</sup>
 Outputs:
 * Amount -- *Integer*
 
 Returns the internal variable that stores the amount won in the last round (`Amount Won in Last Round`).
-##### Game Contestant → Get Money Last Round & Total ^PURE^
+##### Game Contestant → Get Money Last Round & Total <sup>PURE</sup>
 Outputs:
-* Player Money --- *Integer*
-* Player Total --- *Integer*
+* Player Money — *Integer*
+* Player Total — *Integer*
 
 Returns the internal variables for the dollar amount won in the last round and won in total, respectively, as the values for *Player Money* and *Player Total*.
-##### Game Contestant → Get Is Currently Animating ^BPI^
+##### Game Contestant → Get Is Currently Animating <sup>BPI</sup>
 Outputs:
-* Animating? --- *Boolean*
+* Animating? — *Boolean*
 
 Returns the internal variable storing whether the player is currently animating (beyond what the Animation Blueprint dictates) or not (`Is Currently Animating?`).
-##### Game Contestant → Get Is Clapping ^BPI^
+##### Game Contestant → Get Is Clapping <sup>BPI</sup>
 Outputs:
-* Clapping? --- *Boolean*
+* Clapping? — *Boolean*
 
 Returns the internal variable storing whether or not the player is currently clapping (`Is Clapping?`). Called by the Contestant Animation Blueprint (`ABP_Contestant`) to detect whether the animation state itself should be entered or not.
 
@@ -622,31 +622,31 @@ Each of the 32 letter tiles is represented by the Letter Tile actor blueprint (`
 ##### Letter Tile Events
 ###### Letter Tile → Set Tile Index
 Inputs: 
-* New Index --- *Integer*
+* New Index — *Integer*
 
 Sets this tile's internal `Tile Index` to the *New Index* value passed here. This allows us to reference a specific tile as long as we know its index (0-51, assuming a 52-tile board).
-###### Letter Tile → Highlight Tile ^BPI^
+###### Letter Tile → Highlight Tile <sup>BPI</sup>
 Sets the tile's current texture to the "highlighted" texture and marks the tile's internal `Is Highlighted?` flag to *true*.
-###### Letter Tile → Reveal Letter ^BPI^
+###### Letter Tile → Reveal Letter <sup>BPI</sup>
 Using the internal `Tile Character` enum's display name as the key, the matching texture is pulled from the Letter Tile Character Textures datatable (`DT_LetterTileCharacterTextures`) and used for this tile's texture. Then, both the `Is Hidden?` and `Is Highlighted?` flags are reset to *false*.
-###### Letter Tile → Hide Letter ^BPI^
+###### Letter Tile → Hide Letter <sup>BPI</sup>
 If this tile's internal `Tile String` is set to *something*, then the "Hidden Blank" texture is applied to the tile's screen (showing a blank white tile) and the `Is Hidden?` flag is set to *true*.
-###### Letter Tile → Clear Value ^BPI^
+###### Letter Tile → Clear Value <sup>BPI</sup>
 Sets the `Tile Character` enum to *- none -* (blank), the `Tile String` to an empty string, and the tile screen's texture to the "Unused With Logo" texture (the green cloudy background with the Disc of Destiny logo). Basically, this resets the tile to the default "unused" state.
 
 ##### Letter Tile Functions
-###### Letter Tile → Get Letter String ^PURE^
+###### Letter Tile → Get Letter String <sup>PURE</sup>
 Returns the internal `Tile String` value, which represents the letter/character stored in this tile as part of the current puzzle.
-###### Letter Tile → Has Consonant? ^PURE^
+###### Letter Tile → Has Consonant? <sup>PURE</sup>
 Returns whether the internal `Tile String` value is a consonant using a string of consonants for comparison.
-###### Letter Tile → Has Vowel? ^PURE^
+###### Letter Tile → Has Vowel? <sup>PURE</sup>
 Returns whether the internal `Tile String` value is a vowel using a string of vowels for comparison.
-###### Letter Tile → Is Tile Character Value Set? ^PURE^
-Returns whether or not the internal `Tile Character` enum value is anything other than *- none -* --- i.e., it's not blank.
-###### Letter Tile → Is Tile Highlighted? ^PURE^
-Returns the value of the internal `Is Highlighted?` flag --- i.e., whether or not this tile is in a "highlighted" state during the letter reveal process.
-###### Letter Tile → Is Tile Revealed? ^PURE^
-Returns the opposite value of the internal `Is Hidden?` flag --- i.e., whether or not this tile is "revealed" (simply the opposite of "hidden").
+###### Letter Tile → Is Tile Character Value Set? <sup>PURE</sup>
+Returns whether or not the internal `Tile Character` enum value is anything other than *- none -* — i.e., it's not blank.
+###### Letter Tile → Is Tile Highlighted? <sup>PURE</sup>
+Returns the value of the internal `Is Highlighted?` flag — i.e., whether or not this tile is in a "highlighted" state during the letter reveal process.
+###### Letter Tile → Is Tile Revealed? <sup>PURE</sup>
+Returns the opposite value of the internal `Is Hidden?` flag — i.e., whether or not this tile is "revealed" (simply the opposite of "hidden").
 ###### Letter Tile → Update Tile Visually
 Applies the stored `Tile Screen Texture` to the Material Instance used for all letter tiles, thus updating the tile visually to reflect the desired texture at any given time.
 
@@ -684,7 +684,7 @@ The character that this tile is set to within the puzzle answer, in Enum form. T
 ###### Letter Tile → Is Hidden?
 **Type:** Boolean
 
-Whether or not this tile is "hidden" --- i.e., there is a value set, but the tile has not been revealed yet to the players.
+Whether or not this tile is "hidden" — i.e., there is a value set, but the tile has not been revealed yet to the players.
 
 #### Puzzle Board
 The game's Puzzle Board actor blueprint, `BP_PuzzleBoard`, handles most of the logic and functionality for the puzzle board or the individual tiles stored within.
@@ -698,116 +698,116 @@ But here, we loop through this array. Taking the World Location value of each ti
 Called after the tiles with occurrences of the correctly guessed letter have been highlighted. The next step would be to then reveal them, one by one. This event sets the internal variable `Number Of Highlighted Tiles` to 0, then triggers the next event `Check Tile & Reveal If Highlighted`, passing 0 as the first *Tile Index* to check.
 ###### Puzzle Board → Check Tile & Reveal if Highlighted
 Inputs:
-* Tile Index --- *Integer*
+* Tile Index — *Integer*
 
 Called by the above event. This recursive event first sets the internal variable `Currently Checking Tile Index` to the given *Tile Index*, so we can keep track of this more easily. As long as *Tile Index* is a valid index value (i.e. it's less than 52), we run a check to see if this Letter Tile is in a "highlighted" state (i.e. it was highlighted during the letter reveal process and we must now reveal it to the players dramatically); if it is, then we increment the `Number Of Highlighted Tiles` counter and reveal the tile's content. We wait 1.5 seconds (seems to be the sweet spot when playing) before running this event recursively with the value of *Tile Index* incremented by 1.
 
 If we have been passed a *Tile Index* value of 52, then we have checked all tiles and the Game Mode's `Letter Reveals Completed` interface event is called, with the value of `Number Of Highlighted Tiles` passed to the event parameter of the same name.
 
 ##### Puzzle Board Functions
-###### Puzzle Board → Are All Consonants Solved? ^PURE^
+###### Puzzle Board → Are All Consonants Solved? <sup>PURE</sup>
 Outputs:
-* All Solved? --- *Boolean*
+* All Solved? — *Boolean*
 
 Goes through each tile in the `Tile Contents` array and, if the tile both contains a consonant and is hidden, then we return *false* to signify that there is at least one consonant in the puzzle that has yet to be solved. Otherwise, if we have completed the loop, that means we have not found any unsolved consonants, so we return *true* to signify that all consonants have been solved.
-###### Puzzle Board → Are All Letters Revealed? ^PURE^
+###### Puzzle Board → Are All Letters Revealed? <sup>PURE</sup>
 Outputs:
-* All Revealed? --- *Boolean*
+* All Revealed? — *Boolean*
 
 Goes through each tile in the `Tile Contents` array and, if the tile is hidden, then we return *false* to signify that there is at least one letter in the puzzle that has yet to be solved. Otherwise, if we have completed the loop, that means we have not found any unsolved letters, so we return *true* to signify that all letters have been solved.
-###### Puzzle Board → Are All Vowels Solved? ^PURE^
+###### Puzzle Board → Are All Vowels Solved? <sup>PURE</sup>
 Outputs:
-* All Solved? --- *Boolean*
+* All Solved? — *Boolean*
 
 Goes through each tile in the `Tile Contents` array and, if the tile both contains a vowel and is hidden, then we we return *false* to signify that there is at least one vowel in the puzzle that has yet to be solved. Otherwise, if we have completed the loop, that means we have not found any unsolved vowels, so we return *true* to signify that all vowels have been solved.
 ###### Puzzle Board → Clear Board
 Loops through each stored tile and clears its value by calling each Letter Tile's `Clear Value` interface event.
-###### Puzzle Board → Does String End In Hyphen? ^PURE^
+###### Puzzle Board → Does String End In Hyphen? <sup>PURE</sup>
 Inputs:
-* String To Check --- *String*
+* String To Check — *String*
 
 Outputs:
-* Ends In Hyphen? --- *Boolean*
+* Ends In Hyphen? — *Boolean*
 
 Used during the process that populates the board's tiles with a given puzzle answer's text, and allows us to split up hyphenated words as though they were separate words (but *not* add a space in between) to better fit compound words and phrases. Does what it says on the tin, and returns whether or not the *String To Check* ends with the hyphen character ("-").
-###### Puzzle Board → Fill String Array ^PURE^
+###### Puzzle Board → Fill String Array <sup>PURE</sup>
 Inputs:
-* Count --- *Integer*
-* Contents --- *String*
+* Count — *Integer*
+* Contents — *String*
 
 Outputs:
-* Array --- *Array: Strings*
+* Array — *Array: Strings*
 
 Fills a temporary array of strings with *Count* occurrences of *Contents* and returns the result.
 ###### Puzzle Board → Fit Phrase To Rows
 Inputs:
-* Phrase --- *String*
+* Phrase — *String*
 
 Outputs:
-* Success? --- *Boolean*
-* Filled Rows --- *Array: Strings*
+* Success? — *Boolean*
+* Filled Rows — *Array: Strings*
 
 Takes a puzzle answer (*Phrase*) and breaks it apart into an array of words (including compound word/phrase segments), then uses a simple algorithm to attempt to fit each word into each row until it either runs out of words or rows to fill. If it runs out of words, the fit algorithm has completed successfully and *Success?* is set to *true* with an array of strings, each string representing the text in a row of the puzzle board (including spaces), passed as the result. If at any point it fails, *Success?* is set to *false* and an empty array is passed as the result.
-###### Puzzle Board → Get Currently Checking Tile Actor ^PURE^
+###### Puzzle Board → Get Currently Checking Tile Actor <sup>PURE</sup>
 Outputs:
-* Tile --- *Letter Tile* (`BP_LetterTile`)
+* Tile — *Letter Tile* (`BP_LetterTile`)
 
 Returns a reference to the Letter Tile actor stored at the `Currently Checking Tile Index` (referenced above; defined below) of the `Tile Contents` array of tiles.
-###### Puzzle Board → Get Letter Tile Actor At Index ^PURE^
+###### Puzzle Board → Get Letter Tile Actor At Index <sup>PURE</sup>
 Inputs:
-* Index --- *Integer*
+* Index — *Integer*
 
 Outputs:
-* Actor Ref --- *Letter Tile* (`BP_LetterTile`)
+* Actor Ref — *Letter Tile* (`BP_LetterTile`)
 
 Looks up the given *Index* as the key in the `Tile Contents` array and returns the Actor Ref stored therein.
-###### Puzzle Board → Get Number Of Rows In Puzzle ^PURE^
+###### Puzzle Board → Get Number Of Rows In Puzzle <sup>PURE</sup>
 Outputs:
-* Count --- *Integer*
+* Count — *Integer*
 
 Returns the length of the `Row Lengths` array, which stores the number of tiles in each row (i.e. `[12, 14, 14, 12]`).
-###### Puzzle Board → Get Number Of Tiles On Board ^PURE^
+###### Puzzle Board → Get Number Of Tiles On Board <sup>PURE</sup>
 Outputs:
-* Count --- *Integer*
+* Count — *Integer*
 
 Returns the sum of each value stored in the `Row Lengths` array, which stores the number of tiles in each row (i.e. `[12, 14, 14, 12]`). In our case, this would be *52*.
-###### Puzzle Board → Get Tile Character Enum From String ^PURE^
+###### Puzzle Board → Get Tile Character Enum From String <sup>PURE</sup>
 Inputs:
-* Character Str --- *String*
+* Character Str — *String*
 
 Outputs:
-* Character Enum --- *Letter Tile Characters (Enum)* (`E_LetterTileCharacters`)
+* Character Enum — *Letter Tile Characters (Enum)* (`E_LetterTileCharacters`)
 
 Returns the enum value in Letter Tile Characters that has a matching Row Name in the Letter Tile Character Strings datatable (`DT_LetterTableCharacterStrings`), or *- none -* if not found (and thus an unused tile set for the tile in question).
-###### Puzzle Board → Get Tile Index From Row, Pos ^PURE^
+###### Puzzle Board → Get Tile Index From Row, Pos <sup>PURE</sup>
 Inputs:
-* Row Index --- *Integer*
-* Position in Row --- *Integer*
+* Row Index — *Integer*
+* Position in Row — *Integer*
 
 Outputs:
-* Tile Index --- *Integer*
+* Tile Index — *Integer*
 
 Calculates the *Tile Index* value that would exist in the given *Row Index* at the given *Position in Row* (thus allowing us to select an individual Letter Tile if we know the row number and position within that row) and returns that value.
 ###### Puzzle Board → Hide Entire Puzzle
 Loops through each stored tile and hides it by calling each Letter Tile's `Hide Letter` interface event.
 ###### Puzzle Board → Highlight All Tiles Containing Letter
 Inputs:
-* Letter --- *String*
+* Letter — *String*
 
 Outputs:
-* Number Highlighted --- *Integer*
+* Number Highlighted — *Integer*
 
 Loops through each stored tile and checks its letter value (via its `Get Letter String` function) against the given *Letter*. If it's a match, highlight it by calling its `Highlight Tile` interface event, then increment a local variable we use to keep track of how many we have highlighted so far. Upon completion of the loop, return the local counter's value as the *Number Highlighted*.
 ###### Puzzle Board → Reveal Entire Puzzle
 Loops through each stored tile and reveals its contents by calling each Letter Tile's `Reveal Letter` interface event.
 ###### Puzzle Board → Reveal Tile At Index
 Inputs:
-* Tile Index --- *Integer*
+* Tile Index — *Integer*
 
 Retrieves the Letter Tile actor at the given *Tile Index* via `Get Letter Tile At Index` (see above) and reveals it by calling the tile's `Reveal Letter` interface event.
 ###### Puzzle Board → Set Puzzle Contents
 Inputs:
-* Full Phrase --- *String*
+* Full Phrase — *String*
 
 Takes the given *Full Phrase* (the entire puzzle answer in one string) and attempts to `Fit Phrase To Rows` (see above). All puzzles in the game should work, so the *false* condition does not currently have any functionality other than a `Print String` to both the screen and the log (in red, shown for 10 seconds).
 
@@ -871,30 +871,30 @@ The game wheel itself, `BP_Wheel`, contains the logic and functionality necessar
 Called at the start of the game (only once) to initialize the spaces atop the wheel. For each Wheel Space Data structure stored in `Wheel Spaces` (see below), each wheel space's rotation is calculated and each Wheel Wedge actor is spawned and positioned properly, such that each space occupies an equal amount of real estate atop the wheel, adding up to an even 360° (to fill up the entire wheel and leave no gaps between wedges). Each Wheel Wedge is then added to the `Wedges` variable (see below).
 ###### Wheel → Spin
 Inputs:
-* Modifier --- *Integer*
+* Modifier — *Integer*
 
 Responsible for actually spinning the wheel's static mesh. Called whenever a player chooses to spin the wheel when it is their turn.
 
 Before anything happens, the current rotation of the wheel is stored (in `Wheel Rotation Offset`), so that we can start the spin at its current rotation (and not at 0°). First, the Timeline `Wheel Spin` (see below, under *Wheel Variables*) is used to animate the Z-rotation of the wheel mesh. The *Modifier* (a float representing a factor by which we multiply the default 720° rotation represented by the return value of the Timeline node. The value between 0 and 720 is multiplied by this number, then added to the `Wheel Rotation Offset`, to give us the rotation to use at each *Update* execution path (from the Timeline node), where the wheel mesh's relative rotation is set to this value.
 
-Concurrently with this Timeline call (as accomplished using the Sequence node), Delays and camera changes are used for cinematic effect, similar to the real world game show's production --- and for demonstration purposes as well. This is easy to customize; add new cameras if needed, and alter the Delay amounts and order of camera changes. Keep in mind that the Sequence ensures that each execution path is run one after the other without waiting for completion of the previous iteration, so keep this in mind when setting your custom Delay duration values.
+Concurrently with this Timeline call (as accomplished using the Sequence node), Delays and camera changes are used for cinematic effect, similar to the real world game show's production — and for demonstration purposes as well. This is easy to customize; add new cameras if needed, and alter the Delay amounts and order of camera changes. Keep in mind that the Sequence ensures that each execution path is run one after the other without waiting for completion of the previous iteration, so keep this in mind when setting your custom Delay duration values.
 
 Once the Timeline animation completes (set to 10 seconds), we retrieve a reference to the game's Wheel Pointer  (via the Game Mode) and react to the space that the spin landed on by calling the Pointer's `Detect Wedge And Act` event.
 
 ##### Wheel Functions
-###### Wheel → Get Wedge Angle ^PURE^
+###### Wheel → Get Wedge Angle <sup>PURE</sup>
 Outputs:
-* Angle --- *Float*
+* Angle — *Float*
 
 Returns the angle of the wedge (360° divided by the number of wheel spaces). In the default game there are 24 spaces on the wheel, so each wedge would have an *Angle* of 15° (360° ÷ 24).
-###### Wheel → Get Wedge Location ^PURE^
+###### Wheel → Get Wedge Location <sup>PURE</sup>
 Outputs:
-* Location --- *Vector*
+* Location — *Vector*
 
 Returns a location that is at world center, with a Z-offset (height) of 0.2 units above the `Wedges` Scene Component's Z-offset, so the wedges show up *just* atop the wheel (and to avoid polygon jumbling).
-###### Wheel → Is Wheel Spinning? ^PURE^
+###### Wheel → Is Wheel Spinning? <sup>PURE</sup>
 Outputs:
-* Spinning? --- *Boolean*
+* Spinning? — *Boolean*
 
 Returns the value of the internal flag `Is Spinning?` (which is set to true during the 10-second wheel spin process).
 ###### Wheel → Render Outer Pegs
@@ -968,15 +968,15 @@ The `Has Sprung Back` flag starts at *true* to allow for "cocking" of the imagin
 
 You can play with these values to achieve different clicking effects and frequencies.
 ###### Wheel Pointer → Detect Wedge and Act
-Using the `Wedge Detection Origin` Scene Component's world location as a baseline, a line trace aiming downward detects if we've hit a Wheel Wedge actor (`BP_WheelWedge`) --- which we should every single time, if the Pointer is placed correctly in the game level in comparison to the Wheel (`BP_Wheel`). If we don't hit a wheel space, then we re-spin and the process repeats itself. Otherwise, if we do, get the data for this space (via the `Get Wheel Space Data` function of the Wheel Wedge we hit. This data is passed along to the Game Mode's `Handle Wheel Space Landed On` interface event (see above), which handles the functionality that runs for each space type.
+Using the `Wedge Detection Origin` Scene Component's world location as a baseline, a line trace aiming downward detects if we've hit a Wheel Wedge actor (`BP_WheelWedge`) — which we should every single time, if the Pointer is placed correctly in the game level in comparison to the Wheel (`BP_Wheel`). If we don't hit a wheel space, then we re-spin and the process repeats itself. Otherwise, if we do, get the data for this space (via the `Get Wheel Space Data` function of the Wheel Wedge we hit. This data is passed along to the Game Mode's `Handle Wheel Space Landed On` interface event (see above), which handles the functionality that runs for each space type.
 
 ##### Wheel Pointer Functions
-###### Wheel Pointer → Get Pointer Rotation ^PURE^
+###### Wheel Pointer → Get Pointer Rotation <sup>PURE</sup>
 Outputs:
-* Rotation --- *Float*
+* Rotation — *Float*
 
 Returns the relative rotation of the Pointer compared to how it was placed in the game level (i.e. compared to `Starting Rotation`, set in `BeginPlay` above).
-###### Wheel Pointer → Get Pointer Detector Origin ^PURE^
+###### Wheel Pointer → Get Pointer Detector Origin <sup>PURE</sup>
 Called by the line trace that is run in `Detect Wedge and Act` above. Simply returns the world location of the Wedge Detection Origin.
 
 ##### Wheel Pointer Variables
@@ -1028,32 +1028,32 @@ Each space on the wheel is represented by an instance of a Wheel Wedge, `BP_Whee
 ##### Wheel Wedge Functions
 ###### Wheel Wedge → Calculate Vertices
 Outputs:
-* Vertices --- *Array: Vectors*
+* Vertices — *Array: Vectors*
 
 Called during Construction of this Wheel Wedge when rendering wedge mesh. Starting with the center point as the first element, compile an array of vertex locations (Vectors) along the outer edge of the wedge's curve, and return this as *Vertices*.
 ###### Wheel Wedge → Calculate Normals
 Outputs:
-* Normals --- *Array: Vectors*
+* Normals — *Array: Vectors*
 
 Called during Construction of this Wheel Wedge when rendering the wedge mesh. Returns an array of Vectors of value *(0, 0, 1)* with a count matching the number of vertices (calculated in the previous function).
 ###### Wheel Wedge → Calculate Triangles
 Outputs:
-* Triangles --- *Array: Integers*
+* Triangles — *Array: Integers*
 
 Called during Construction of this Wheel Wedge when rendering the wedge mesh. Constructs an array of triangles in the form of triples of float values and returns this as *Triangles*.
 ###### Wheel Wedge → Calculate UVs
 Outputs:
-* UVs --- *Array: Vector 2D Structures*
+* UVs — *Array: Vector 2D Structures*
 
 Called during Construction of this Wheel Wedge when rendering the wedge mesh. Compiles an array of 2D (UV) locations required by the Create Mesh Section node.
 ###### Wheel Wedge → Get Center Vertex
 Outputs:
-* Array --- *Array: Vectors*
+* Array — *Array: Vectors*
 
 Simply a shorthand for an array consisting solely of a center coordinate (`(0, 0 ,0)`), used in the instantiation of the *Vertices* local variable within the `Calculate Vertices` function (see above).
 ###### Wheel Wedge → Get Wheel Space Data
 Outputs:
-* Data --- *Wheel Space Data Structure* (`S_WheelSpaceData`)
+* Data — *Wheel Space Data Structure* (`S_WheelSpaceData`)
 
 Called after spinning the wheel and upon landing on a valid Wheel Wedge. Returns a constructed Wheel Space Data variable consisting of values from this Wheel Wedge's internal variables: `Text Content`, `Color`, `Text Color`, `Action on Land`, `Cash Value`, and `Text World Size` (see below for all). Data then gets passed on to the Game Mode's `Handle Wheel Space Landed On` interface event (see above).
 ###### Wheel Wedge → Set Wedge Material
@@ -1062,7 +1062,7 @@ Called during Construction of this Wheel Wedge when rendering the wedge mesh. Cr
 Called during Construction of this Wheel Wedge when rendering the wedge mesh. Calculates where the Wheel Wedge's text should be positioned and how large it should be.
 ###### Wheel Wedge → Get Index In Wheel
 Outputs:
-* Index --- *Integer*
+* Index — *Integer*
 
 Returns the index of this tile in the wheel (0-23 in the default 24-space wheel), stored in the internal `Index In Wheel` variable (see below).
 
@@ -1120,7 +1120,7 @@ Populated during spawning of Wheel Wedge actors by the Wheel at runtime. Represe
 ###### Wheel Wedge → Cash Value
 **Type:** Integer
 
-The monetary value assigned to correct consonant letters. Only applies to *Money*-type Wheel Wedges --- or any other you might decide to apply it to.
+The monetary value assigned to correct consonant letters. Only applies to *Money*-type Wheel Wedges — or any other you might decide to apply it to.
 ###### Wheel Wedge → Color
 **Type:** Linear Color
 
@@ -1165,17 +1165,17 @@ Radial offset in degrees of the text renderer. Same as the `Radius` value (see a
 World size, in units, of the rendered text.
 
 ### Blueprint Interfaces
-To avoid resource-intensive references to the custom Game Mode, Game Instance, and Player Controller blueprints used in this project, Blueprint Interfaces are utilized instead. We also use BPIs for shared functionality that must be called on a number of separate objects --- for example, Contestants, Message Widgets, and Wheel Wedges. The full list is below.
+To avoid resource-intensive references to the custom Game Mode, Game Instance, and Player Controller blueprints used in this project, Blueprint Interfaces are utilized instead. We also use BPIs for shared functionality that must be called on a number of separate objects — for example, Contestants, Message Widgets, and Wheel Wedges. The full list is below.
 
-#### Game Contestant Functionality Interface --- `BPI_ContestantFunctionality`
+#### Game Contestant Functionality Interface — `BPI_ContestantFunctionality`
 * `Get Is Clapping`
 * `Get Is Currently Animating`
 
-#### Game CineCamera Interface --- `BPI_GameCineCameraFunctionality`
+#### Game CineCamera Interface — `BPI_GameCineCameraFunctionality`
 * `Get Camera Label`
 * `Get Self Reference`
 
-#### GameMode Core Functionality Interface --- `BPI_GameModeCoreFunctionality`
+#### GameMode Core Functionality Interface — `BPI_GameModeCoreFunctionality`
 * **Events**
 	* `Begin New Round`
 	* `Gameplay Level Loaded`
@@ -1217,7 +1217,7 @@ To avoid resource-intensive references to the custom Game Mode, Game Instance, a
 	* `Get HUD`
 	* `Update Player Amounts`
 
-#### Letter Tile Behavior Interface --- `BPI_LetterTileFunctionality`
+#### Letter Tile Behavior Interface — `BPI_LetterTileFunctionality`
 * **Behavior**
 	* `Clear Value`
 	* `Hide Letter`
@@ -1225,11 +1225,11 @@ To avoid resource-intensive references to the custom Game Mode, Game Instance, a
 	* `Reveal Letter`
 	* `Set Tile Value`
 
-#### Message Widget Functionality Interface --- `BPI_MessageWidgetFunctionality`
+#### Message Widget Functionality Interface — `BPI_MessageWidgetFunctionality`
 * **Events**
 	* `Message Widget Displayed`
 
-#### GameInstance Core Functionality Interface --- `BPI_PersistentGameCoreFunctionality`
+#### GameInstance Core Functionality Interface — `BPI_PersistentGameCoreFunctionality`
 * **Main Menu**
 	* `Is Intro Song Playing?`
 	* `Set Intro Song Playing State`
@@ -1237,7 +1237,7 @@ To avoid resource-intensive references to the custom Game Mode, Game Instance, a
 	* `Get Fade Overlay Widget`
 	* `Set Fade Overlay Widget`
 
-#### Player Controller Functionality Interface --- `BPI_PlayerControllerFunctionality`
+#### Player Controller Functionality Interface — `BPI_PlayerControllerFunctionality`
 * **Animation**
 	* `Trigger Animation Type`
 * **Camera**
@@ -1248,13 +1248,13 @@ To avoid resource-intensive references to the custom Game Mode, Game Instance, a
 * **Players**
 	* `Get Player Objects`
 
-#### Wheel Wedge ID Interface --- `BPI_WheelWedgeIdentification`
+#### Wheel Wedge ID Interface — `BPI_WheelWedgeIdentification`
 * `Get Index in Wheel`
 
 ### Data
 
 #### Enums
-##### Camera Placements --- `E_CameraPlacements`
+##### Camera Placements — `E_CameraPlacements`
 * -- None --
 * Wheel, Angled
 * Wheel, Overhead
@@ -1267,7 +1267,7 @@ To avoid resource-intensive references to the custom Game Mode, Game Instance, a
 * Puzzle Board
 * DEBUG *(useful for, say, looking up close at the Pointer)*
 
-##### Game UI Message Widgets --- `E_GameUIMessageWidgets`
+##### Game UI Message Widgets — `E_GameUIMessageWidgets`
 Each value corresponds to a User Widget starting with UI_ and ending with the Enum display name (e.g. GameOver → UI_GameOver).
 
 <dl>
@@ -1307,14 +1307,14 @@ Each value corresponds to a User Widget starting with UI_ and ending with the En
 	<dd>*Message: Game over! (show results, final total, prize(s), then let player choose Replay or Quit)*</dd>
 </dl>
 
-##### Letter Tile Characters --- `E_LetterTileCharacters`
+##### Letter Tile Characters — `E_LetterTileCharacters`
 This is a list of possible letters and other characters, with way more symbols than needed (just in case you might want to utilize them and include them in puzzles with their own Letter Tile textures). These values are used as Row Names in the datatables for Letter Tile character strings (`DT_LetterTileCharacterStrings`) and textures (`DT_LetterTileCharacterTextures`).
 
-##### Player Animation Categories --- `E_PlayerAnimationCategories`
+##### Player Animation Categories — `E_PlayerAnimationCategories`
 Useful for playing one random animation out of a categorized group.
 
 * -- none --
-* Greeting --- *(this is used when introducing each contestant)*
+* Greeting — *(this is used when introducing each contestant)*
 * Guessing
 * Timed Out
 * Defeated, Small
@@ -1322,14 +1322,14 @@ Useful for playing one random animation out of a categorized group.
 * Celebrating, Small
 * Celebrating, Big
 
-##### Player Genders --- `E_PlayerGenders`
+##### Player Genders — `E_PlayerGenders`
 
-* -- none -- --- *(i.e. none selected)*
+* -- none -- — *(i.e. none selected)*
 * Male
 * Female
 * Ambiguous
 
-##### Puzzle Categories --- `E_PuzzleCategories`
+##### Puzzle Categories — `E_PuzzleCategories`
 These are all taken from the real world game show and have all appeared as puzzle categories at least once.
 
 * -- none --
@@ -1376,7 +1376,7 @@ These are all taken from the real world game show and have all appeared as puzzl
 * The 70's
 * The 80's
 * The 90's
-* The Office --- *(bonus category!)*
+* The Office — *(bonus category!)*
 * Thing
 * Title/Author
 * Title
@@ -1385,8 +1385,8 @@ These are all taken from the real world game show and have all appeared as puzzl
 * What Are You Wearing?
 * Where Are We Going?
 
-##### Space Action Types --- `E_SpaceActionTypes`
-The *Space Action Types* Enum is a list of wheel space types, each of which can be handled separately (in the Game Mode's `Event Wheel Space Landed On` interface event). Among the following values, only *Money*, *Lose Turn*, and *Bankrupt* are handled by the default game, with the rest being planned for future updates. More can be added, then handled in the Game Mode blueprint --- don't forget to refresh the *Switch on E_SpaceActionTypes* node afterward, though, first.
+##### Space Action Types — `E_SpaceActionTypes`
+The *Space Action Types* Enum is a list of wheel space types, each of which can be handled separately (in the Game Mode's `Event Wheel Space Landed On` interface event). Among the following values, only *Money*, *Lose Turn*, and *Bankrupt* are handled by the default game, with the rest being planned for future updates. More can be added, then handled in the Game Mode blueprint — don't forget to refresh the *Switch on E_SpaceActionTypes* node afterward, though, first.
 
 The following list contains all of the wheel space types that are available to use.
 
@@ -1414,53 +1414,53 @@ The following list contains all of the wheel space types that are available to u
 </dl>
 
 #### Structs
-##### Letter Tile Character String Structure --- `S_LetterTileCharacterString`
-* **Character String** --- *String*
-##### Letter Tile Character Texture Structure --- `S_LetterTileCharacterTexture`
-* **Character Texture** --- *Texture*
-##### Letter Tile Data Structure --- `S_LetterTileData`
-1. **Content** --- *Letter Tile Characters Enum* (`E_LetterTileCharacters`)
+##### Letter Tile Character String Structure — `S_LetterTileCharacterString`
+* **Character String** — *String*
+##### Letter Tile Character Texture Structure — `S_LetterTileCharacterTexture`
+* **Character Texture** — *Texture*
+##### Letter Tile Data Structure — `S_LetterTileData`
+1. **Content** — *Letter Tile Characters Enum* (`E_LetterTileCharacters`)
 	* Content of this tile (e.g. *Letter-A* for "A", *Period* for ".")
-2. **Actor Ref** --- *Letter Tile* (`BP_LetterTile`) *Object Reference*
+2. **Actor Ref** — *Letter Tile* (`BP_LetterTile`) *Object Reference*
 	* Reference to the actual Letter Tile actor BP spawned
-3. **World Location** --- *Vector*
+3. **World Location** — *Vector*
 	* Position of Letter Tile actor blueprint in game world
-4. **Row Position** --- *Integer*
+4. **Row Position** — *Integer*
 	* Index of tile's position in row (0-11 or 0-13, depending on which row)
-5. **Row Index** --- *Integer*
+5. **Row Index** — *Integer*
 	* Index of row in which tile appears
 
-##### Player Animations List Structure --- `S_PlayerAnimationsList`
-* **Animations** --- *Array: Anim Montages*
+##### Player Animations List Structure — `S_PlayerAnimationsList`
+* **Animations** — *Array: Anim Montages*
 
-##### Puzzle Answer Data Structure --- `S_PuzzleAnswerData`
-1. **Category** --- *Puzzle Categories Enum* (`E_PuzzleCategories`)
-2. **Answer** --- *String*
-3. **Letter Count** --- *Integer*
+##### Puzzle Answer Data Structure — `S_PuzzleAnswerData`
+1. **Category** — *Puzzle Categories Enum* (`E_PuzzleCategories`)
+2. **Answer** — *String*
+3. **Letter Count** — *Integer*
 	* Number of letters (A-Z only) in the Answer
-4. **Is Bonus?** --- *Boolean*
+4. **Is Bonus?** — *Boolean*
 	* Is this puzzle short enough to be a Bonus (final round) Puzzle?
 
-##### Wheel Space Data Structure --- `S_WheelSpaceData`
-1. **Space Text** --- *Text*
-2. **Background Color** --- *Linear Color*
-3. **Text Color** --- *Linear Color*
-4. **Action Type** --- *Space Action Types Enum* (`E_SpaceActionTypes`)
-5. **Money Value** --- *Integer*
-6. **Text World Size** --- *Float*
+##### Wheel Space Data Structure — `S_WheelSpaceData`
+1. **Space Text** — *Text*
+2. **Background Color** — *Linear Color*
+3. **Text Color** — *Linear Color*
+4. **Action Type** — *Space Action Types Enum* (`E_SpaceActionTypes`)
+5. **Money Value** — *Integer*
+6. **Text World Size** — *Float*
 
 #### Tables
-##### Letter Tile Character Strings Table --- `DT_LetterTileCharacterStrings`
+##### Letter Tile Character Strings Table — `DT_LetterTileCharacterStrings`
 List of each allowed character's string.
 * Row Structure: `S_LetterTileCharacterString`
 * Number of Rows: **61**
 
-##### Letter Tile Character Textures Table --- `DT_LetterTileCharacterTextures`
+##### Letter Tile Character Textures Table — `DT_LetterTileCharacterTextures`
 List of each allowed character's texture.
 * Row Structure: `S_LetterTileCharacterTexture`
 * Number of Rows: **57**
 
-##### Puzzle Answers Table --- `DT_PuzzleAnswers`
+##### Puzzle Answers Table — `DT_PuzzleAnswers`
 List of all possible puzzle answers to choose from.
 * Row Structure: `S_PuzzleAnswerData`
 * Number of Rows: **79,006**
