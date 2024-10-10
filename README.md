@@ -1480,11 +1480,8 @@ List of all possible puzzle answers to choose from.
 * **Player Input UI: Spin Wheel / Buy Vowel / Solve Puzzle** (`UI_PlayerSelectActionInput`) is displayed at the start of each player's turn. If the player has less than $250 (or whatever the Game Mode's `Vowel Cost` is set to), or there are No More Vowels left in the puzzle to uncover, the "Buy a Vowel" button is disabled. If there are No More Consonants left in the puzzle to uncover, the "Spin the Wheel" button is disabled. When either of the 3 buttons are clicked, the Game Mode's `Close Message Widgets` interface event is triggered. If the player clicks "Spin the Wheel", the Game Mode's `Spin Wheel` interface event is then triggered. If the player clicks "Buy a Vowel", the Game Mode's `Prompt Letter Guess` interface event is triggered, with Game Mode's `Vowel Cost` value passed as the event's *Ltr Value* argument. If the player clicks "Solve the Puzzle", the Game Mode's `Prompt Solve Puzzle` interface event is triggered.
 * **Player Input UI: Solve Puzzle (Freeform Text)** (`UI_PlayerSolvePuzzleTextInput`) is displayed after the player chooses to solve the puzzle. Submitting an empty response or clicking on the "Cancel / Forfeit" button will trigger the Game Mode's `Show Incorrect Solve` interface event. Otherwise, the Game Mode's `Process Solve` interface event is triggered, with the entered text passed as the event's *Guess* argument, where the player's guess is then evaluated.
 
-## Troubleshooting Common Issues
-( List of frequent problems, e.g. wheel not spinning or puzzle board not rendering correctly, and solutions. )
-
 ## Frequently Asked Questions (FAQ)
-( Answers to common questions about setup, customization, and extending the system. )
+*(TBD: Answers to common questions about setup, customization, and extending the system.)*
 
 ## Version History
 Starting with most recent version first:
@@ -1493,10 +1490,10 @@ Starting with most recent version first:
 Initial release with full game system, and a simple three-round game loop.
 
 ## Support & Contact Information
-For any questions regarding the game system, or any comments or suggestions for improvements or additions, please contact me at { FILL IN }, or submit a ticket at { FIND JIRA-LIKE FREE SITE }.
+For any questions regarding the game system, or any comments or suggestions for improvements or additions, please contact me [via my personal site](https://richardbrum.com/contact), or [submit a ticket via GitHub](https://github.com/TerranRich/DiscOfDestiny/issues) (might as well use it for free).
 
 ## Licensing & Legal
-No trademarked or copyrighted terms, logos, sound effects, music, or other materials have been used in the Disc of Destiny project. Everything used within is either sourced from the public domain or Creative Commons (CC0), or created in-house, and verified to be free of any copyright or trademark violations. You are allowed to use anything and everything in this game system for your own legal purposes, including commercial use, under the Unreal Engine licensing terms and agreements. { FIND LINK }
+No trademarked or copyrighted terms, logos, sound effects, music, or other materials have been used in the Disc of Destiny project. Everything used within is either sourced from the public domain or Creative Commons (CC0), or created in-house, and verified to be free of any copyright or trademark violations. You are allowed to use anything and everything in this game system for your own legal purposes, including commercial use, under the Unreal Engine licensing terms and agreements.
 
 ### Credits
 <dl>
